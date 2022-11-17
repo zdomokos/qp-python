@@ -44,18 +44,17 @@ class QpTester(object):
             if call[0][0] == matcher:
                 found = True
                 break
-        if not found:  # Print events
+        if not found:  # print(events
             for call in qp.QF.publish.call_args_list:
                 e = call[0][0]
                 try:
-                    print "%s(%s)" % (qif.name(e.sig),
-                            qif.name(e.sig, e.par))
+                    print("%s(%s)" % (qif.name(e.sig), qif.name(e.sig, e.par)))
                 except:
-                    print "%s" % qif.name(e.sig)
+                    print("%s" % qif.name(e.sig))
             try:
-                print "Expected: %s(%s)" % (qif.name(sig), qif.name(sig, par))
+                print("Expected: %s(%s)" % (qif.name(sig), qif.name(sig, par)))
             except:
-                print "Expected: %s" % qif.name(sig)
+                print("Expected: %s" % qif.name(sig))
         assert found, 'Event not published'
 
     def assertPublishedJson(self, method, params):

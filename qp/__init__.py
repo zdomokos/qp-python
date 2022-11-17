@@ -46,11 +46,10 @@
 
 # Standard
 import sys
-assert (2, 4) <= sys.version_info[:2] < (3, 0), \
-    '%s.%s not supported. Python 2.4 <= required < 3.0' % sys.version_info[:2]
+assert (3, 6) <= sys.version_info[:2], '%s.%s not supported. Python 3.6' % sys.version_info[:2]
 
 # Local
-from qep import *
-from qf import *
+from qp.qep import *
+from qp.qf import *
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'

@@ -100,7 +100,7 @@ class Table(qp.Active):
         self.stoppedNums_ = 0
 
     def initial(self, e):
-        print "Table.initial"
+        print("Table.initial")
         self.INIT(Table.serving)
 
     def serving(self, e):
@@ -155,7 +155,7 @@ class Table(qp.Active):
                 qp.QF.publish(pe)
             return 0
         elif e.sig == TERMINATE_SIG:
-            print "received TERMINATE-SIG"
+            print("received TERMINATE-SIG")
             self.stop()
             return 0
         return qp.Hsm.top
@@ -181,7 +181,7 @@ class Philosopher(qp.Active):
         self.max_feed = max_feed
 
     def initial(self, e):
-        print "Philosopher.initial"
+        print("Philosopher.initial")
         self.num_ = e.phil_num
         self.feedCtr_ = 0
         self.INIT(Philosopher.thinking)
@@ -260,7 +260,7 @@ def displyPhilStat(n, stat):
         for s in g_state:
             assert not (s == "eat" and prev == "eat"), "Error"
             prev = s
-        print "%4d %s" % (qp.QF.get_time(), line)
+        print("%4d %s" % (qp.QF.get_time(), line))
 
 
 def terminate():
@@ -289,6 +289,6 @@ if __name__ == '__main__':
         philosopher.start(n + 1, 128, ie)
     g_table.start(opts.count + 1, 128, None)
     qp.QF.run()
-    print "exiting..."
+    print("exiting...")
     if opts.time:
-        print time.time() - start
+        print(time.time() - start)
