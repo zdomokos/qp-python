@@ -14,7 +14,9 @@ import mock
 # Local
 import sys
 import qp
-import qif
+
+
+# import qif
 
 
 class QpTester(object):
@@ -61,7 +63,7 @@ class QpTester(object):
         par = {
             'method': method,
             'params': params,
-        }
+            }
         self.assertPublished(qif.JSON_SIGNAL, par)
 
     def assertNotPublished(self, sig, par=None):
@@ -136,6 +138,7 @@ class HsmTester(QpTester):
 
 class Matcher(object):
     """Helper class for matching call arguments"""
+
     def __init__(self, compare, obj):
         self.compare = compare
         self.obj = obj
@@ -168,5 +171,3 @@ class HsmUnitTest(unittest.TestCase, HsmTester):
     def tearDown(self):
         unittest.TestCase.tearDown(self)
         HsmTester.tearDown(self)
-
-

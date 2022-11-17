@@ -50,14 +50,16 @@ import logging
 import time
 import threading
 import queue
+from abc import ABC
+from typing import Type
 
 # Local
 import qp
+from qp import Event
 
-
-QF_MAX_ACTIVE = 63          # maximum number of active objects
-TICK = 10                   # milliseconds
-TICK_S = TICK / 1000.0      # seconds
+QF_MAX_ACTIVE = 63  # maximum number of active objects
+TICK = 10  # milliseconds
+TICK_S = TICK / 1000.0  # seconds
 
 logger = logging.getLogger('qp')
 
@@ -71,20 +73,20 @@ class QEQueue(queue.Queue):
 
     def __init__(self, maxsize):
         super().__init__(maxsize)
-        self._max = 0            # watermark
+        self._max = 0  # watermark
         self._maxsize = maxsize
 
-    def post_fifo(self, e):
+    def post_fifo(self, e: Type[Event]):
         """Post event to queue in FIFO manner"""
         self._max = max(self._max, self.qsize())
         self.put(e, block=False)
 
-    def post_lifo(self, e):
+    def post_lifo(self, e: Type[Event]):
         """Post event to queue in LIFO manner"""
         raise NotImplementedError()
 
 
-class Active(qp.Hsm):
+class Active(qp.Hsm, ABC):
     """Hierarchical state machine object with own thread and event queue"""
 
     signals = []
@@ -117,7 +119,7 @@ class Active(qp.Hsm):
         self._thread.name = self.__class__.__name__
         self._thread.start()
 
-    def post_fifo(self, e):
+    def post_fifo(self, e: Type[Event]):
         """Post event to object's queue in FIFO manner.
         Raises QueueOverflowError if queue is full"""
         if self._queue.qsize() >= self._queue._maxsize:
@@ -126,7 +128,7 @@ class Active(qp.Hsm):
             raise QueueOverflowError(message)
         self._queue.post_fifo(e)
 
-    def post_lifo(self, e):
+    def post_lifo(self, e: Type[Event]):
         """Post event to object's queue in LIFO manner"""
         raise NotImplementedError()
 
@@ -150,7 +152,7 @@ class Active(qp.Hsm):
         """Subscribe to specified signal"""
         p = self._prio
         assert sig >= qp.USER_SIG and 0 < p <= QF_MAX_ACTIVE and \
-            QF._active[p] == self
+               QF._active[p] == self
         with QF._lock:
             if sig in QF._subscribers:
                 if not p in QF._subscribers[sig]:
@@ -213,7 +215,7 @@ class TimeEvt(qp.Event):
         with QF._lock:
             was_armed = False
             while self in QF._time_evt_list:
-                QF._time_evt_list.remove(self)    # Remove us from the list
+                QF._time_evt_list.remove(self)  # Remove us from the list
                 was_armed = True
         return was_armed
 
@@ -222,7 +224,7 @@ class TimeEvt(qp.Event):
         assert ticks > 0 and self.sig >= qp.USER_SIG
         with QF._lock:
             self._ctr = ticks
-            if self in QF._time_evt_list:    # Are we armed
+            if self in QF._time_evt_list:  # Are we armed
                 is_armed = True
             else:
                 is_armed = False
@@ -235,12 +237,27 @@ class TimeEvt(qp.Event):
         self._ctr = ticks
         self._act = act
         with QF._lock:
-            QF._time_evt_list.append(self)    # Add us to the list
+            QF._time_evt_list.append(self)  # Add us to the list
 
 
 class QF:
     """Framework for running hierarchical FSMs as Active objects.
     This implementation only allows a single QF instance in an application."""
+
+    class QFMainThread(threading.Thread):
+        cancel_event: threading.Event = threading.Event()
+        name: str = "QF main"
+
+        @classmethod
+        def run(cls):
+            """Run framework with cancel event"""
+            QF.start()
+            while QF._running and not cls.cancel_event.is_set():
+                with QF._lock:
+                    QF.tick()
+                time.sleep(TICK_S)
+            if not cls.cancel_event.is_set():
+                cls.cancel_event.set()
 
     _active = [None] * (QF_MAX_ACTIVE + 1)
     _lock = threading.RLock()
@@ -248,6 +265,7 @@ class QF:
     _subscribers = {}  # Dict with signals: subscriber list
     _tick_ctr = 0
     _running = False
+    _qf_thread: QFMainThread | None = None
 
     @classmethod
     def start(cls):
@@ -264,12 +282,26 @@ class QF:
             time.sleep(TICK_S)
 
     @classmethod
+    def run_begin_async(cls):
+        """
+        Run QF main loop in a separate thread
+        """
+        cls._qf_thread = QF.QFMainThread()
+        cls._qf_thread.start()
+        return cls._qf_thread.cancel_event
+
+    @classmethod
+    def run_end_async(cls, timeout=None):
+        if cls._qf_thread is not None:
+            cls._qf_thread.cancel_event.wait(timeout)
+
+    @classmethod
     def stop(cls):
         """Stop framework"""
         cls._running = False
 
     @classmethod
-    def publish(cls, e):
+    def publish(cls, e: Type[Event]):
         """Publish event e to the framework"""
         with cls._lock:  # perform multicasting with the scheduler locked
             subscribers = cls._subscribers.get(e.sig, [])
@@ -280,12 +312,12 @@ class QF:
     @classmethod
     def tick(cls):
         """Update system tick and evaluate counters and timer events"""
-        cls._tick_ctr += 1    # increment the tick counter
+        cls._tick_ctr += 1  # increment the tick counter
         # iterate over copy of list since we change it
         for t in cls._time_evt_list[:]:
             t._ctr -= 1
-            if (t._ctr == 0):    # is the time event about to expire?
-                if (t._interval != 0):    # is it a periodic time evt?
+            if (t._ctr == 0):  # is the time event about to expire?
+                if (t._interval != 0):  # is it a periodic time evt?
                     t._ctr = t._interval
                 else:  # one-shot timeevt, disarm by removing it from the list
                     assert t in cls._time_evt_list
@@ -358,7 +390,7 @@ class QF:
         with cls._lock:
             p = a._prio
             assert 0 < p <= QF_MAX_ACTIVE
-            cls._active[p] = None        # free-up the priority level
+            cls._active[p] = None  # free-up the priority level
             logger.info('Removing %s' % a._thread.name)
             for active in cls._active:
                 if active:  # At least one active object

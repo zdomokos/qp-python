@@ -43,6 +43,8 @@
 # -----------------------------------------------------------------------------
 
 """Python port of the Quantum Event Processor"""
+from abc import ABC, abstractmethod
+from typing import Type
 
 # Internal QEP constants
 _QEP_EMPTY_SIG = 0
@@ -81,7 +83,7 @@ Q_TRAN_STA_TYPE = 2
 QEP_MAX_NEST_DEPTH = 6
 
 
-class Fsm:
+class Fsm(ABC):
     """Fsm represents a flat state machine with entry/exit actions"""
 
     def __init__(self, initial=None):
@@ -89,24 +91,26 @@ class Fsm:
         # Transition attributes (none/dynamic/static)
         self.tran_ = Q_TRAN_NONE_TYPE
 
-    def init(self, e=None):
-        """Performs the first step of FSM initialization by assigning the
-        initial pseudostate to the currently active state of the state
-        machine """
-        assert self._state != None
+    def init(self, e: Type[Event] = None):
+        """
+        Performs the first step of FSM initialization by assigning the
+        initial pseudostate to the currently active state of the state machine
+        """
+        assert self._state is not None
         initial = self._state
 
         self.initial(e)        # Execute the initial transition
         assert initial != self._state    # The target cannot be initial
         self._state(self, _QEP_ENTRY_EVENT)
 
-    def initial(self, e):
+    @abstractmethod
+    def initial(self, e: Event):
         """Pure virtual initial function"""
         raise NotImplementedError("Must override this function")
 
-    def dispatch(self, e):
+    def dispatch(self, e: Event):
         """Processes one event at a time in Run-to-Completion fashion.
-        The argument e is a Event or a class derived from Event.
+        The argument e is an Event or a class derived from Event.
 
         Note: Must be called after Fsm.init()."""
         s = self._state
@@ -122,19 +126,19 @@ class Fsm:
         return self._state
 
 
-class Hsm(Fsm):
-    """Hsm represents an hierarchical finite state machine (HSM)"""
+class Hsm(Fsm, ABC):
+    """Hsm represents a hierarchical finite state machine (HSM)"""
 
     def __init__(self, initial):
         super().__init__(initial)
 
-    def top(self, e=None):
+    def top(self, e: Type[Event] = None):
         """the ultimate root of state hierarchy in all HSMs
         derived from Hsm. This state handler always returns (QSTATE)0,
         which means that it handles all events."""
         return 0
 
-    def init(self, e=None):
+    def init(self, e: Type[Event] = None):
         """Performs the first step of HSM initialization by assigning the
         initial pseudostate to the currently active state of the state
         machine """
@@ -159,7 +163,7 @@ class Hsm(Fsm):
             if self.QEP_TRIG_(s, INIT_SIG) != 0:
                 break
 
-    def dispatch(self, e):
+    def dispatch(self, e: Type[Event]):
         """Executes state handlers for dispatched signals"""
         t = self._state
         path = [None] * QEP_MAX_NEST_DEPTH

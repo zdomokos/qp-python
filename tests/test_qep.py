@@ -46,6 +46,7 @@
 
 # Standard
 import sys
+
 sys.path.insert(0, '..')
 import string
 import unittest
@@ -66,62 +67,61 @@ TERMINATE_SIG = qp.USER_SIG + 9
 IGNORE_SIG = qp.USER_SIG + 10
 MAX_SIG = qp.USER_SIG + 11
 
-
 EXPECTED_STRING = \
-"""top-INIT;d-ENTRY;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
-A:d21-A;d211-EXIT;d21-EXIT;d21-ENTRY;d21-INIT;d211-ENTRY;
-B:d21-B;d211-EXIT;d211-ENTRY;
-D:d211-D;d211-EXIT;d21-INIT;d211-ENTRY;
-E:d-E;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d11-ENTRY;
-I:d1-I;
-F:d1-F;d11-EXIT;d1-EXIT;d2-ENTRY;d21-ENTRY;d211-ENTRY;
-I:d2-I;
-I:d-I;
-F:d2-F;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d11-ENTRY;
-A:d1-A;d11-EXIT;d1-EXIT;d1-ENTRY;d1-INIT;d11-ENTRY;
-B:d1-B;d11-EXIT;d11-ENTRY;
-D:d1-D;d11-EXIT;d1-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
-D:d11-D;d11-EXIT;d1-INIT;d11-ENTRY;
-E:d-E;d11-EXIT;d1-EXIT;d1-ENTRY;d11-ENTRY;
-G:d11-G;d11-EXIT;d1-EXIT;d2-ENTRY;d21-ENTRY;d211-ENTRY;
-H:d211-H;d211-EXIT;d21-EXIT;d2-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
-H:d11-H;d11-EXIT;d1-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
-C:d1-C;d11-EXIT;d1-EXIT;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
-G:d21-G;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d1-INIT;d11-ENTRY;
-C:d1-C;d11-EXIT;d1-EXIT;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
-C:d-C;d211-EXIT;d21-EXIT;d2-EXIT;d-EXIT;s-ENTRY;s-INIT;s1-ENTRY;s11-ENTRY;
-C:s1-C;s11-EXIT;s1-EXIT;s2-ENTRY;s2-INIT;s21-ENTRY;s211-ENTRY;
-A:s21-A;s211-EXIT;s21-EXIT;s21-ENTRY;s21-INIT;s211-ENTRY;
-A:s21-A;s211-EXIT;s21-EXIT;s21-ENTRY;s21-INIT;s211-ENTRY;
-B:s21-B;s211-EXIT;s211-ENTRY;
-B:s21-B;s211-EXIT;s211-ENTRY;
-D:s211-D;s211-EXIT;s21-INIT;s211-ENTRY;
-D:s211-D;s211-EXIT;s21-INIT;s211-ENTRY;
-E:s-E;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
-I:s1-I;
-F:s1-F;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
-I:s2-I;
-I:s-I;
-F:s2-F;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
-A:s1-A;s11-EXIT;s1-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
-A:s1-A;s11-EXIT;s1-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
-B:s1-B;s11-EXIT;s11-ENTRY;
-B:s1-B;s11-EXIT;s11-ENTRY;
-D:s1-D;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
-D:s11-D;s11-EXIT;s1-INIT;s11-ENTRY;
-D:s1-D;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
-D:s11-D;s11-EXIT;s1-INIT;s11-ENTRY;
-E:s-E;s11-EXIT;s1-EXIT;s1-ENTRY;s11-ENTRY;
-G:s11-G;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
-H:s211-H;s211-EXIT;s21-EXIT;s2-INIT;s21-ENTRY;s211-ENTRY;
-G:s21-G;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
-H:s11-H;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
-F:s1-F;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
-H:s211-H;s211-EXIT;s21-EXIT;s2-INIT;s21-ENTRY;s211-ENTRY;
-F:s2-F;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
-C:s1-C;s11-EXIT;s1-EXIT;s2-ENTRY;s2-INIT;s21-ENTRY;s211-ENTRY;
-G:s21-G;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
-G:s11-G;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;"""
+    """top-INIT;d-ENTRY;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
+    A:d21-A;d211-EXIT;d21-EXIT;d21-ENTRY;d21-INIT;d211-ENTRY;
+    B:d21-B;d211-EXIT;d211-ENTRY;
+    D:d211-D;d211-EXIT;d21-INIT;d211-ENTRY;
+    E:d-E;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d11-ENTRY;
+    I:d1-I;
+    F:d1-F;d11-EXIT;d1-EXIT;d2-ENTRY;d21-ENTRY;d211-ENTRY;
+    I:d2-I;
+    I:d-I;
+    F:d2-F;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d11-ENTRY;
+    A:d1-A;d11-EXIT;d1-EXIT;d1-ENTRY;d1-INIT;d11-ENTRY;
+    B:d1-B;d11-EXIT;d11-ENTRY;
+    D:d1-D;d11-EXIT;d1-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
+    D:d11-D;d11-EXIT;d1-INIT;d11-ENTRY;
+    E:d-E;d11-EXIT;d1-EXIT;d1-ENTRY;d11-ENTRY;
+    G:d11-G;d11-EXIT;d1-EXIT;d2-ENTRY;d21-ENTRY;d211-ENTRY;
+    H:d211-H;d211-EXIT;d21-EXIT;d2-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
+    H:d11-H;d11-EXIT;d1-EXIT;d-INIT;d1-ENTRY;d11-ENTRY;
+    C:d1-C;d11-EXIT;d1-EXIT;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
+    G:d21-G;d211-EXIT;d21-EXIT;d2-EXIT;d1-ENTRY;d1-INIT;d11-ENTRY;
+    C:d1-C;d11-EXIT;d1-EXIT;d2-ENTRY;d2-INIT;d21-ENTRY;d211-ENTRY;
+    C:d-C;d211-EXIT;d21-EXIT;d2-EXIT;d-EXIT;s-ENTRY;s-INIT;s1-ENTRY;s11-ENTRY;
+    C:s1-C;s11-EXIT;s1-EXIT;s2-ENTRY;s2-INIT;s21-ENTRY;s211-ENTRY;
+    A:s21-A;s211-EXIT;s21-EXIT;s21-ENTRY;s21-INIT;s211-ENTRY;
+    A:s21-A;s211-EXIT;s21-EXIT;s21-ENTRY;s21-INIT;s211-ENTRY;
+    B:s21-B;s211-EXIT;s211-ENTRY;
+    B:s21-B;s211-EXIT;s211-ENTRY;
+    D:s211-D;s211-EXIT;s21-INIT;s211-ENTRY;
+    D:s211-D;s211-EXIT;s21-INIT;s211-ENTRY;
+    E:s-E;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
+    I:s1-I;
+    F:s1-F;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
+    I:s2-I;
+    I:s-I;
+    F:s2-F;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
+    A:s1-A;s11-EXIT;s1-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
+    A:s1-A;s11-EXIT;s1-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
+    B:s1-B;s11-EXIT;s11-ENTRY;
+    B:s1-B;s11-EXIT;s11-ENTRY;
+    D:s1-D;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
+    D:s11-D;s11-EXIT;s1-INIT;s11-ENTRY;
+    D:s1-D;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
+    D:s11-D;s11-EXIT;s1-INIT;s11-ENTRY;
+    E:s-E;s11-EXIT;s1-EXIT;s1-ENTRY;s11-ENTRY;
+    G:s11-G;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
+    H:s211-H;s211-EXIT;s21-EXIT;s2-INIT;s21-ENTRY;s211-ENTRY;
+    G:s21-G;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
+    H:s11-H;s11-EXIT;s1-EXIT;s-INIT;s1-ENTRY;s11-ENTRY;
+    F:s1-F;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;
+    H:s211-H;s211-EXIT;s21-EXIT;s2-INIT;s21-ENTRY;s211-ENTRY;
+    F:s2-F;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s11-ENTRY;
+    C:s1-C;s11-EXIT;s1-EXIT;s2-ENTRY;s2-INIT;s21-ENTRY;s211-ENTRY;
+    G:s21-G;s211-EXIT;s21-EXIT;s2-EXIT;s1-ENTRY;s1-INIT;s11-ENTRY;
+    G:s11-G;s11-EXIT;s1-EXIT;s2-ENTRY;s21-ENTRY;s211-ENTRY;"""
 
 
 class HsmTst(qp.Hsm):
@@ -327,7 +327,7 @@ class HsmTst(qp.Hsm):
                 self.foo_ = 0
                 return 0
         elif e.sig == TERMINATE_SIG:
-            #sys.exit()
+            # sys.exit()
             return 0
         return qp.Hsm.top
 
@@ -465,25 +465,26 @@ class HsmTst(qp.Hsm):
         """Dispatch event to state machine"""
         if (e.sig < TERMINATE_SIG):
             self._add_message("\n" + \
-                             (string.ascii_uppercase[e.sig - A_SIG]) + ":")
+                              (string.ascii_uppercase[e.sig - A_SIG]) + ":")
         qp.Hsm.dispatch(self, e)
 
     def _add_message(self, message):
         """Add message string to result"""
         self.result = self.result + message
+        print(message)
 
 
 class TestQHsm(unittest.TestCase):
 
     def test_transition_from_d211_to_d11(self):
         qhsm = HsmTst()
-        qhsm.init()    # Initial transition
+        qhsm.init()  # Initial transition
         qhsm.dispatch(qp.Event(E_SIG))
         self.assertTrue(qhsm.is_in(HsmTst.d11))
 
     def test_that_transitions_matches_expected_route(self):
         qhsm = HsmTst()
-        qhsm.init()    # Initial transition
+        qhsm.init()  # Initial transition
         qhsm.dispatch(qp.Event(A_SIG))
         qhsm.dispatch(qp.Event(B_SIG))
         qhsm.dispatch(qp.Event(D_SIG))

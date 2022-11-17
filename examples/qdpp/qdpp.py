@@ -289,7 +289,10 @@ if __name__ == '__main__':
         ie.phil_num = n
         philosopher.start(n + 1, 128, ie)
     g_table.start(opts.count + 1, 128, None)
-    qp.QF.run()
+    # qp.QF.run()
+    qp.QF.run_begin_async()
+    qp.QF.run_end_async()
+
     print("exiting...")
     if opts.time:
         print(time.time() - start)
