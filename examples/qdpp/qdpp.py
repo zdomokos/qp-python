@@ -272,8 +272,8 @@ if __name__ == '__main__':
     import optparse
     import time
     parser = optparse.OptionParser()
-    parser.add_option('--count', '-n', dest='count', default=10, type='int')
-    parser.add_option('--maxfeed', dest='max_feed', default=200, type='int')
+    parser.add_option('--count', '-n', dest='count', default=5, type='int')
+    parser.add_option('--maxfeed', dest='max_feed', default=20, type='int')
     parser.add_option('--time', dest='time', action='store_true',
                       default=False)
     opts, args = parser.parse_args()

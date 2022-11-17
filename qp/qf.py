@@ -49,7 +49,7 @@ from __future__ import with_statement
 import logging
 import time
 import threading
-import Queue
+import queue
 
 # Local
 import qp
@@ -66,11 +66,11 @@ class QueueOverflowError(Exception):
     pass
 
 
-class QEQueue(Queue.Queue):
+class QEQueue(queue.Queue):
     """QEQueue base class"""
 
     def __init__(self, maxsize):
-        Queue.Queue.__init__(self)
+        queue.Queue.__init__(self)
         self._max = 0            # watermark
         self._maxsize = maxsize
 
@@ -171,7 +171,7 @@ class Active(qp.Hsm):
         p = self._prio
         assert 0 < p <= QF_MAX_ACTIVE and QF._active[p] == self
         with QF._lock:
-            for subscribers in QF._subscribers.itervalues():
+            for subscribers in QF._subscribers.values():
                 if p in subscribers:
                     subscribers.remove(p)
 
