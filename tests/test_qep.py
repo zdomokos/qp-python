@@ -128,7 +128,7 @@ class HsmTst(qp.Hsm):
     """Test all possible transitions in a hierarchical state machine"""
 
     def __init__(self):
-        qp.Hsm.__init__(self, HsmTst.initial)
+        super().__init__(HsmTst.initial)
         self.foo_ = None
         self.result = ""  # Contains info about state transitions
 

@@ -59,7 +59,7 @@ import qp
 class TestClass(qp.Active):
 
     def __init__(self):
-        qp.Hsm.__init__(self, self.__class__.initial)
+        super().__init__(self.__class__.initial)
 
     def initial(self, e):
         self.INIT(self.__class__.main)

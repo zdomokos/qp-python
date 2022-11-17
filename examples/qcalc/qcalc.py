@@ -90,7 +90,7 @@ else:
 logging.basicConfig(level=logging.DEBUG, format=logging_format)
 
 
-class QCalcGui(object):
+class QCalcGui:
     """GTK GUI"""
 
     logger = logging.getLogger('QCalcGui')

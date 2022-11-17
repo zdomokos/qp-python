@@ -48,12 +48,12 @@
 from __future__ import with_statement
 import sys
 import os.path
+
 sys.path.insert(0, os.path.join('..', '..'))
-                                 # Expect us to be two levels below the library
+# Expect us to be two levels below the library
 
 # Local
 import qp
-
 
 HUNGRY_SIG = qp.USER_SIG
 DONE_SIG = qp.USER_SIG + 1
@@ -75,7 +75,7 @@ class TableEvt(qp.Event):
     """Table event that targets a specific philosopher"""
 
     def __init__(self, sig):
-        qp.Event.__init__(self, sig)
+        super().__init__(sig)
         self.phil_num = -1
 
 
@@ -87,13 +87,13 @@ class Table(qp.Active):
         DONE_SIG,
         TERMINATE_SIG,
         STOP_SIG
-    ]
+        ]
     FREE = 0
     USED_LEFT = 1
     USED_RIGHT = 2
 
     def __init__(self, count):
-        qp.Active.__init__(self, Table.initial)
+        super().__init__(Table.initial)
         self.count = count
         self.fork_ = [Table.FREE] * self.count
         self.isHungry_ = [False] * self.count
@@ -135,7 +135,7 @@ class Table(qp.Active):
                 pe.phil_num = neighbor
                 qp.QF.publish(pe)
                 displyPhilStat(neighbor, "eating")
-            neighbor = self.LEFT(n)    # check the left neighbor
+            neighbor = self.LEFT(n)  # check the left neighbor
             if (self.isHungry_[neighbor] and
                     self.fork_[self.LEFT(neighbor)] == Table.FREE):
                 self.fork_[self.LEFT(neighbor)] = Table.USED_LEFT
@@ -173,10 +173,10 @@ class Philosopher(qp.Active):
     """Philosopher behavior"""
     signals = [
         EAT_SIG,
-    ]
+        ]
 
     def __init__(self, max_feed):
-        qp.Active.__init__(self, Philosopher.initial)
+        super().__init__(Philosopher.initial)
         self.timeEvt_ = qp.TimeEvt(TIMEOUT_SIG)
         self.max_feed = max_feed
 
@@ -209,7 +209,7 @@ class Philosopher(qp.Active):
 
     def eating(self, e):
         if e.sig == qp.ENTRY_SIG:
-            self.feedCtr_ += 1    # one more feeding
+            self.feedCtr_ += 1  # one more feeding
             self.timeEvt_.post_in(self, EAT_TIME)
             return 0
         elif e.sig == qp.EXIT_SIG:
@@ -271,6 +271,7 @@ def terminate():
 if __name__ == '__main__':
     import optparse
     import time
+
     parser = optparse.OptionParser()
     parser.add_option('--count', '-n', dest='count', default=5, type='int')
     parser.add_option('--maxfeed', dest='max_feed', default=20, type='int')

@@ -90,7 +90,7 @@ else:
 logging.basicConfig(level=logging.DEBUG, format=logging_format)
 
 
-class QCalcGui(object):
+class QCalcGui:
     """GTK GUI"""
 
     logger = logging.getLogger('QCalcGui')
@@ -153,7 +153,7 @@ class QCalc(qp.Hsm):
     ]
 
     def __init__(self, disp_width=14):
-        qp.Hsm.__init__(self, self.__class__.initial)
+        super().__init__(self.__class__.initial)
         self.logger = logging.getLogger('QCalc')
         self.disp_width = disp_width
         self.display_ = ' ' * self.disp_width

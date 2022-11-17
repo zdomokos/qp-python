@@ -70,7 +70,7 @@ class QEQueue(queue.Queue):
     """QEQueue base class"""
 
     def __init__(self, maxsize):
-        queue.Queue.__init__(self)
+        super().__init__(maxsize)
         self._max = 0            # watermark
         self._maxsize = maxsize
 
@@ -93,16 +93,16 @@ class Active(qp.Hsm):
         """Wrapped python thread"""
 
         def __init__(self, active):
-            threading.Thread.__init__(self)
+            super().__init__()
             self._active = active
 
         def run(self):
             """Entry point for running Active object in own thread"""
-            assert self._active != None
+            assert self._active is not None
             self._active.run()
 
     def __init__(self, initial):
-        qp.Hsm.__init__(self, initial)
+        super().__init__(initial)
         self._running = threading.Event()
 
     def start(self, prio, size, ie):
@@ -180,6 +180,7 @@ class TimeEvt(qp.Event):
     """Timer event"""
 
     def __init__(self, s):
+        super().__init__()
         assert s >= qp.USER_SIG
         self.sig = s
         self._act = None
@@ -237,7 +238,7 @@ class TimeEvt(qp.Event):
             QF._time_evt_list.append(self)    # Add us to the list
 
 
-class QF(object):
+class QF:
     """Framework for running hierarchical FSMs as Active objects.
     This implementation only allows a single QF instance in an application."""
 

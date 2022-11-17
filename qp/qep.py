@@ -56,7 +56,7 @@ TERM_SIG = 4
 USER_SIG = 4
 
 
-class Event(object):
+class Event:
     """Event base class"""
 
     def __init__(self, sig=0):
@@ -81,7 +81,7 @@ Q_TRAN_STA_TYPE = 2
 QEP_MAX_NEST_DEPTH = 6
 
 
-class Fsm(object):
+class Fsm:
     """Fsm represents a flat state machine with entry/exit actions"""
 
     def __init__(self, initial=None):
@@ -126,7 +126,7 @@ class Hsm(Fsm):
     """Hsm represents an hierarchical finite state machine (HSM)"""
 
     def __init__(self, initial):
-        Fsm.__init__(self, initial)
+        super().__init__(initial)
 
     def top(self, e=None):
         """the ultimate root of state hierarchy in all HSMs
