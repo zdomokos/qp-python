@@ -254,8 +254,7 @@ def displyPhilStat(n, stat):
                 fork = '['
             else:
                 fork = ']'
-            line += \
-                g_state[index] + ("%3d" % g_philosophers[index].feedCtr_) + fork
+            line += g_state[index] + ("%3d" % g_philosophers[index].feedCtr_) + fork
         prev = ""
         for s in g_state:
             assert not (s == "eat" and prev == "eat"), "Error"
@@ -281,8 +280,7 @@ if __name__ == '__main__':
 
     g_table = Table(count=opts.count)
     g_state = [" - "] * opts.count
-    g_philosophers = [Philosopher(max_feed=opts.max_feed) \
-                      for _n in range(opts.count)]
+    g_philosophers = [Philosopher(max_feed=opts.max_feed) for _n in range(opts.count)]
     start = time.time()
     for n, philosopher in enumerate(g_philosophers):
         ie = TableEvt(0)

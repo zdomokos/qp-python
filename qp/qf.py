@@ -151,8 +151,7 @@ class Active(qp.Hsm, ABC):
     def subscribe(self, sig):
         """Subscribe to specified signal"""
         p = self._prio
-        assert sig >= qp.USER_SIG and 0 < p <= QF_MAX_ACTIVE and \
-               QF._active[p] == self
+        assert sig >= qp.USER_SIG and 0 < p <= QF_MAX_ACTIVE and QF._active[p] == self
         with QF._lock:
             if sig in QF._subscribers:
                 if not p in QF._subscribers[sig]:
@@ -339,8 +338,7 @@ class QF:
     def get_queue_margin(cls, prio):
         assert prio <= QF_MAX_ACTIVE and cls._active[prio] != 0
         with cls._lock:
-            margin = cls._active[prio]._queue._maxsize - \
-                     cls._active[prio]._queue._max
+            margin = cls._active[prio]._queue._maxsize - cls._active[prio]._queue._max
         return margin
 
     @classmethod
@@ -380,8 +378,7 @@ class QF:
     def add(cls, a):
         """Add active object"""
         p = a._prio
-        assert 0 < p <= QF_MAX_ACTIVE and (cls._active[p] == None), \
-            "p=%d" % (p)
+        assert 0 < p <= QF_MAX_ACTIVE and (cls._active[p] == None), "p=%d" % (p)
         cls._active[p] = a
 
     @classmethod

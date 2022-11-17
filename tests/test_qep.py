@@ -464,8 +464,7 @@ class HsmTst(qp.Hsm):
     def dispatch(self, e):
         """Dispatch event to state machine"""
         if (e.sig < TERMINATE_SIG):
-            self._add_message("\n" + \
-                              (string.ascii_uppercase[e.sig - A_SIG]) + ":")
+            self._add_message("\n" + (string.ascii_uppercase[e.sig - A_SIG]) + ":")
         qp.Hsm.dispatch(self, e)
 
     def _add_message(self, message):
